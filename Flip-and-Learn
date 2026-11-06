@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>ABC Kids Learning</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg,#75e6ff,#b5f5cb,#fff0a6);
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+header {
+  text-align: center;
+  color: #173c70;
+  font-size: 25px;
+  font-weight: bold;
+  padding: 10px;
+}
+
+#home {
+  text-align: center;
+  padding: 10px;
+}
+
+.options {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-top: 25px;
+}
+
+.choice {
+  width: 40%;
+  max-width: 300px;
+  min-height: 190px;
+  border: 5px solid white;
+  border-radius: 25px;
+  background: #ffb9d8;
+  box-shadow: 0 7px 0 #d77ba5;
+  font-size: 25px;
+  font-weight: bold;
+  color: #54204c;
+  cursor: pointer;
+  padding: 15px;
+}
+
+.choice:nth-child(2) {
+  background: #ffe48b;
+  box-shadow: 0 7px 0 #d5a83d;
+}
+
+#game {
+  display: none;
+  text-align: center;
+  padding: 5px;
+}
+
+.card {
+  background: white;
+  width: 85%;
+  max-width: 650px;
+  margin: 5px auto;
+  padding: 10px;
+  border-radius: 25px;
+  box-shadow: 0 6px 15px #0002;
+}
+
+.letter {
+  font-size: clamp(65px,15vh,110px);
+  color: #ff548c;
+  font-weight: bold;
+}
+
+.picture {
+  font-size: clamp(55px,13vh,90px);
+}
+
+.word {
+  font-size: clamp(23px,5vh,36px);
+  font-weight: bold;
+  color: #2466a5;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 10px;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+}
+
+.control {
+  padding: 12px 22px;
+  border-radius: 15px;
+  background: #ff8e43;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.sound { background: #39b9e8; }
+.homebtn { background: #8765d9; }
+
+#progress {
+  font-weight: bold;
+  color: #294c78;
+  font-size: 17px;
+}
+
+@media (orientation: portrait) {
+  body::after {
+    content: "Please rotate your phone to landscape mode";
+    position: fixed;
+    inset: 0;
+    background: #fff2a5;
+    z-index: 10;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 25px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>🌈 ABC KIDS LEARNING 🌈</header>
+
+<div id="home">
+  <h2>Welcome Little Stars!</h2>
+  <p>Choose your learning game</p>
+
+  <div class="options">
+
+    <button class="choice" onclick="startGame('abc')">
+      Alphabets Learning
+    </button>
+
+    <button class="choice" onclick="startGame('words')">
+      Animal Names with Alphabets
+    </button>
+
+  </div>
+</div>
+
+<div id="game">
+
+  <div id="progress">Letter 1 of 26</div>
+
+  <div class="card">
+    <div class="letter" id="letter">A a</div>
+    <div class="picture" id="picture">🍎</div>
+    <div class="word" id="word">A for Apple</div>
+  </div>
+
+  <div class="controls">
+    <button class="control" onclick="previous()">⬅ Back</button>
+    <button class="control sound" onclick="speak()">🔊 Listen</button>
+    <button class="control" onclick="next()">Next ➡</button>
+  </div>
+
+  <button class="control homebtn" onclick="goHome()">🏠 Home</button>
+
+</div>
+
+<script>
+
+const data = [
+["A","Apple","🍎"],
+["B","Ball","⚽"],
+["C","Cat","🐱"],
+["D","Dog","🐶"],
+["E","Elephant","🐘"],
+["F","Fish","🐟"],
+["G","Grapes","🍇"],
+["H","House","🏠"],
+["I","Ice Cream","🍦"],
+["J","Juice","🧃"],
+["K","Kite","🪁"],
+["L","Lion","🦁"],
+["M","Monkey","🐵"],
+["N","Nest","🪺"],
+["O","Orange","🍊"],
+["P","Parrot","🦜"],
+["Q","Queen","👑"],
+["R","Rabbit","🐰"],
+["S","Sun","☀️"],
+["T","Tiger","🐯"],
+["U","Umbrella","☂️"],
+["V","Van","🚐"],
+["W","Watch","⌚"],
+["X","Xylophone","🎼"],
+["Y","Yak","🐂"],
+["Z","Zebra","🦓"]
+];
+
+let index = 0;
+let mode = "words";
+
+function startGame(selected) {
+  mode = selected;
+  index = 0;
+
+  document.getElementById("home").style.display = "none";
+  document.getElementById("game").style.display = "block";
+
+  showLetter();
+  setTimeout(speak, 500);
+}
+
+function showLetter() {
+  let item = data[index];
+
+  document.getElementById("letter").textContent =
+    mode === "abc" ? item[0] + " " + item[0].toLowerCase() : item[0];
+
+  document.getElementById("picture").textContent =
+    mode === "abc" ? "🔤" : item[2];
+
+  document.getElementById("word").textContent =
+    mode === "abc" ? "Letter " + item[0] :
+    item[0] + " for " + item[1];
+
+  document.getElementById("progress").textContent =
+    "Letter " + (index + 1) + " of 26";
+}
+
+function speak() {
+  let item = data[index];
+  speechSynthesis.cancel();
+
+  let text = mode === "abc"
+    ? item[0]
+    : item[0] + " for " + item[1];
+
+  let voice = new SpeechSynthesisUtterance(text);
+  voice.lang = "en-US";
+  voice.rate = 0.75;
+  voice.pitch = 1.1;
+
+  speechSynthesis.speak(voice);
+}
+
+function next() {
+  if (index < 25) {
+    index++;
+    showLetter();
+    speak();
+  } else {
+    alert("Congratulations! You completed ABC!");
+    goHome();
+  }
+}
+
+function previous() {
+  if (index > 0) {
+    index--;
+    showLetter();
+    speak();
+  }
+}
+
+function goHome() {
+  speechSynthesis.cancel();
+  document.getElementById("game").style.display = "none";
+  document.getElementById("home").style.display = "block";
+}
+
+</script>
+</body>
+</html>
